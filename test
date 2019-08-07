@@ -1,0 +1,39 @@
+resource "aws_lb" "test" {
+  name               = "test-lb-tf"
+  internal           = false
+  load_balancer_type = "application"
+  security_groups    = ["sg-06c53b9880932992c"]
+  subnets            = ["subnet-0ad9b342", "subnet-0ad9b342"]
+
+  enable_deletion_protection = true
+
+  access_logs {
+    bucket  = "vikram67"
+    prefix  = "test-lb"
+    enabled = true
+  }
+
+  tags = {
+    Environment = "production"
+  }
+}
+
+
+###Target group creation attachement for ALB
+
+resource "aws_alb_target_group" "tiger" {
+        name    = "alb-tiger"
+        vpc_id  = "vpc-5fdbf239"
+        port    = "80"
+        protocol        = "HTTP"
+        health_check {
+                path = "/"
+                port = "80"
+                protocol = "HTTP"
+                healthy_threshold = 2
+                unhealthy_threshold = 2
+                interval = 5
+                timeout = 4
+                matcher = "200-308"
+        }
+}
